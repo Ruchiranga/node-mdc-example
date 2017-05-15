@@ -1,17 +1,17 @@
 'use strict';
 
 var cls = require('continuation-local-storage');
-var cuid = require('cuid');
 
-var logContext = cls.createNamespace('app-log-ctx');
+var logContext = cls.createNamespace('net.cake.global');
 
 module.exports = function (req, res, next) {
   logContext.bindEmitter(req);
   logContext.bindEmitter(res);
 
+  var correlationId = req.header("X-Correlation-Id");
+
   logContext.run(function () {
-    logContext.set('requestId', cuid());
-    logContext.set('sessionId', req.sessionID);
+    logContext.set('correlationId', correlationId);
     next();
   });
 };

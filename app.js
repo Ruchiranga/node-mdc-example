@@ -4,7 +4,6 @@ var express = require('express');
 var session = require('express-session');
 
 var loggingContext = require('./middlewares/log-ctx');
-var mainRoutes = require('./routes/index');
 var actionRoutes = require('./routes/actions');
 
 
@@ -33,8 +32,10 @@ app.use(loggingContext);
 
 //// Routes
 
+app.use(express.static('public'))
+
 app.use('/actions', actionRoutes);
-app.use('/', mainRoutes);
+// app.use('/', mainRoutes);
 
 
 //// Error handling

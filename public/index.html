@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Node MDC Test</title>
+    <script>
+      function sendMultiple(count) {
+        var i;
+        for (i = 0; i < count; i++) {
+          sendRequest();
+        }
+      };
+
+      function sendRequest() {
+        var correlationid = new Date().getTime();
+        // To make the ids look more different at a glance
+        correlationid += Math.floor((Math.random() * 1000000000));
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/actions/' + correlationid);
+        xhr.setRequestHeader('X-Correlation-Id', correlationid);
+        xhr.send(null);
+
+        xhr.onreadystatechange = function () {
+          var DONE = 4; // readyState 4 means the request is done.
+          var HEADERS_RECEIVED = 2;
+          var OK = 200; // status 200 is a successful return.
+          if (xhr.readyState === DONE) {
+            if (xhr.status === OK){
+              var line = document.createElement('div');
+              line.innerHTML = xhr.responseText;
+              document.getElementById('logs').appendChild(line);
+              console.log(xhr.responseText); // 'This is the returned text.'
+            }
+            else {
+              var line = document.createElement('div');
+              line.innerHTML = "Error: " + xhr.responseText;
+              document.getElementById('logs').appendChild(line);
+              console.log('Error: ' + xhr.status); // An error occurred during the request.
+            }
+          }
+        };
+      };
+      
+      function clearLog() {
+        var div = document.getElementById('logs');
+        while(div.firstChild){
+          div.removeChild(div.firstChild);
+        }
+      };
+    </script>
+</head>
+<body>
+    <button onclick="sendRequest()">Send request</button>
+    <button onclick="sendMultiple(10)">Send 10 requests</button>
+    <button onclick="clearLog()">Clear log</button>
+    
+    <div id="logs"></div>
+
+</body>
+</html>
